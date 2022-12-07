@@ -8,6 +8,30 @@ get_header();
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
+
+	<!-- Imagens Responsivas -->
+	
+	<?php 
+		$imagem_id = get_field("background_home");
+
+		$background_large = wp_get_attachment_image_src($imagem_id, 'large');
+		$background_medium = wp_get_attachment_image_src($imagem_id, 'medium');
+	?>
+
+	<style>
+		.introducao {
+			/* background: url("img/bg.jpg") no-repeat center; */
+			background: url("<?php echo $background_large[0]; ?>") no-repeat center cover;
+		}
+
+		@media only screen and (max-width: 767px) {
+			.introducao {
+				/* background: url("../img/bg-mobile.jpg") no-repeat center; */
+				background: url("<?php echo $background_medium[0]; ?>") no-repeat center cover;
+			}
+		}
+	</style>
+
 	<section class="introducao">
 		<div class="container">
 			<h1>
