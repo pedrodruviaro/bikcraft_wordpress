@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "wp-admin": true,
+        "wp-includes": true
+    }
+}
