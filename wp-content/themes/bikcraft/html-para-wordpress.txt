@@ -26,20 +26,21 @@ Maque Check All em Global Privileges
 3 - Colocar/criar o arquivo style.css na raiz do tema
 
 4 - Adicionar a descrição do tema no topo do style.css
-/*
+/_
 Theme Name: Rest
 Theme URI: http://rest.com
 Author: André Rafael
 Author URI: http://origamid.com/
 Description: Tema criado para o restaurante Rest
 Version: 1.0
-*/
-
+_/
 
 5 - Ativar o tema no Wordpress
 
 6 - Corrigir o caminho do style.css e outros caminhos se necessário
+
 <?php echo get_stylesheet_directory_uri(); ?>
+
 Essa função adiciona o caminho até a raiz do tema
 
 7 - Separar o header e footer em arquivos header.php e footer.php
@@ -51,6 +52,7 @@ Com <?php get_header(); ?> e <?php get_footer(); ?>
 8 - Começar a substituir o conteúdo por funções de Wordpress
 
 <?php bloginfo('name'); ?>
+
 Mostra o nome do blog
 
 9 - Adicionar as páginas na interface do Wordpress
@@ -58,6 +60,7 @@ Mostra o nome do blog
 10 - Transformar as páginas em HTML, em templates de Páginas
 A página index.php deve estar reservada para conteúdo genérico.
 Adicionar o nome page- na frente de cada template de página para facilitar a organização.
+
 <?php
 // Template Name: Sobre
 ?>
@@ -69,9 +72,9 @@ ele é inteligente o suficiente para saber se precisa mostrar apenas um ou uma s
 Adicionar o Loop as páginas e ao index.php
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-	
-	<?php the_title(); ?>
-	<?php the_content(); ?>
+
+    <?php the_title(); ?>
+    <?php the_content(); ?>
 
 <?php endwhile; else: ?>
 <p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
@@ -89,8 +92,8 @@ Adicionar o conteúdo a interface do Custom Fields.
 13 - Repeater Field
 
 <?php if(have_rows('nomedorepeater')): while(have_rows('nomedorepeater')) : the_row(); ?>
-	
-	the_sub_field('nomedocampo');
+
+    the_sub_field('nomedocampo');
 
 <?php endwhile; else : endif; ?>
 
@@ -102,9 +105,11 @@ Adicionar o conteúdo a interface do Custom Fields.
 ?>
 
 15 - Terminar de adicionar os outros campos
+
 <?php echo date("Y"); ?> (Mostrar a data)
 
 16 - Adicionar campos para SEO
+
 <title><?php bloginfo('name'); ?> - <?php wp_title(''); ?> <?php the_field('title_seo'); ?></title>
 <meta name="description" content="<?php bloginfo('name'); ?> - <?php wp_title(''); ?> <?php the_field('description_seo'); ?>">
 
@@ -128,7 +133,7 @@ remove_action('admin_print_styles', 'print_emoji_styles');
 add_theme_support('menus');
 
 function register_my_menu() {
-  register_nav_menu('header-menu',__( 'Header Menu' ));
+register_nav_menu('header-menu',\_\_( 'Header Menu' ));
 }
 add_action( 'init', 'register_my_menu' );
 
@@ -139,3 +144,94 @@ add_action( 'init', 'register_my_menu' );
 	);
 	wp_nav_menu( $args );
 ?>
+
+-----------------------------------------------------------------
+
+# Custom Post Types
+
+
+function custom_post_type_produtos() {
+	register_post_type('produtos', array(
+		'label' => 'Produtos',
+		'description' => 'Produtos',
+		'public' => true,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'capability_type' => 'post',
+		'map_meta_cap' => true,
+		'hierarchical' => false,
+		'rewrite' => array('slug' => 'produtos', 'with_front' => true),
+		'query_var' => true,
+		'supports' => array('title', 'editor', 'page-attributes','post-formats'),
+
+		'labels' => array (
+			'name' => 'Produtos',
+			'singular_name' => 'Produto',
+			'menu_name' => 'Produtos',
+			'add_new' => 'Adicionar Novo',
+			'add_new_item' => 'Adicionar Novo Produto',
+			'edit' => 'Editar',
+			'edit_item' => 'Editar Produto',
+			'new_item' => 'Novo Produto',
+			'view' => 'Ver Produto',
+			'view_item' => 'Ver Produto',
+			'search_items' => 'Procurar Produtos',
+			'not_found' => 'Nenhum Produto Encontrado',
+			'not_found_in_trash' => 'Nenhum Produto Encontrado no Lixo',
+		)
+	));
+}
+add_action('init', 'custom_post_type_produtos');
+
+O template utilizado é single-slug.php (ou index.php caso não exista)
+
+<?php
+	$args = array (
+		'post_type' => 'produtos'
+	);
+	$the_query = new WP_Query ( $args );
+?>
+
+<?php if ( $the_query->have_posts() ) : while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
+	<h1><?php the_title(); ?></h1>
+<?php endwhile; else: endif; ?>
+
+
+
+
+Adicionar o css
+.current_page_item a
+
+20 - Adicionar o JS e o CSS da forma correta
+
+// Registrar o CSS e o JS
+function bikcraft_scripts() {
+	// Desregistra o jQuery do Wordpress
+	wp_deregister_script('jquery');
+
+	// Registra o jQuery Novo
+	wp_register_script( 'jquery', get_template_directory_uri() . '/js/libs/jquery-1.11.2.min.js', array(), "1.11.2", true );
+
+	// Registra o Script de Plugins, com dependência do jquery, sem especificar versão e no footer do site
+	wp_register_script( 'plugins-script', get_template_directory_uri() . '/js/plugins.js', array( 'jquery' ), false, true );
+
+	// Registra o Script Principal, com dependência do jquery e plugins, sem especificar versão e no footer do site
+	wp_register_script( 'main-script', get_template_directory_uri() . '/js/main.js', array( 'jquery', 'plugins-script' ), false, true );
+
+	// Coloca script no site
+	wp_enqueue_script( 'main-script' );
+}
+add_action( 'wp_enqueue_scripts', 'bikcraft_scripts' );
+
+
+21 - Adicionar o SEO
+
+<?php wp_title(''); ?>
+
+<link rel="shortcut icon" href="<?php echo get_stylesheet_directory_uri(); ?>/favicon.ico" />
+
+Adicionar a imagem ao tema
+
+22 - Adicionar o blog
+
+Criar uma página especifica para o blog e adicionar ela nas Configurações > Leitura

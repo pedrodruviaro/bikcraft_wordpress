@@ -158,6 +158,10 @@ img {
     color: #fff;
 }
 
+.current_page_item a {
+    color: white !important;
+}
+
 /* Introdução */
 
 .introducao {
@@ -239,6 +243,7 @@ img {
 .produtos_lista li {
     background: #fec63e;
     text-align: center;
+    color: black;
 }
 
 .produtos_lista li img {
@@ -252,6 +257,10 @@ img {
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-top: 20px;
+}
+
+.produtos_lista li {
+    color: black;
 }
 
 .produtos_lista li h3:after {
@@ -361,8 +370,6 @@ img {
 .quebra {
     width: 100%;
     height: 220px;
-    background: url("../img/bg-footer.jpg") no-repeat center;
-    background-size: cover;
     text-align: center;
     padding-top: 40px;
 }
